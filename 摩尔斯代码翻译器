@@ -1,0 +1,68 @@
+int ledPin = 12;
+
+char* letters[] = {
+".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", // 定义A-I的摩尔斯代码
+".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", // 定义J-R的摩尔斯代码
+"...", "-", "..-", "...-", ".--", "-..-", "-.--", "--.." // 定义S-Z的摩尔斯代码
+};
+
+char* numbers[] = {"-----", ".----", "..---", "...--", "....-", ".....", "-....", "--...", "---..", "----."};//定义数字0-9的摩尔斯代码
+int dotDelay = 200;//相邻代码件时延为200ms
+void setup() 
+{
+pinMode(ledPin, OUTPUT);
+Serial.begin(9600);
+}
+
+void loop() 
+{
+char ch;
+if (Serial.available()) //检验串口显示器是否有输入
+{
+ch = Serial.read(); // 读取字符
+if (ch >= 'a' && ch <= 'z')
+{
+flashSequence(letters[ch - 'a']);
+}
+else if (ch >= 'A' && ch <= 'Z')
+{
+flashSequence(letters[ch - 'A']);
+}
+else if (ch >= '0' && ch <= '9')
+{
+flashSequence(numbers[ch - '0']);
+}
+else if (ch == ' ')
+{
+delay(dotDelay * 4); //字符间停顿
+}
+}
+}
+
+void flashSequence(char* sequence)
+{
+int i = 0;
+while (sequence[i] != NULL)
+{
+flashDotOrDash(sequence[i]);
+i++;
+}
+delay(dotDelay * 3); //字符间停顿
+}
+
+void flashDotOrDash(char dotOrDash)
+{
+digitalWrite(ledPin, HIGH);
+if (dotOrDash == '.')
+{
+delay(dotDelay); 
+}
+else 
+{
+delay(dotDelay * 3); 
+}
+digitalWrite(ledPin, LOW); 
+delay(dotDelay); 
+}
+
+
